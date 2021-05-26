@@ -16,4 +16,13 @@ public interface CustomerServer {
     Customer queryCustomerByCustomerNo(String customerNo);
 
 
+    int queryCustomerByIdNo(String idNo);
+
+    int queryCustomerByPhone(String phone);
+
+    void insertCustomer(Customer customer);
+
+    Customer queryCustomerByPhoneAndPassword(String phone, String password);
+
+    void updateCustomer(Customer customer);
 }
