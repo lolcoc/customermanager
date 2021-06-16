@@ -45,30 +45,30 @@ public class CustomerController {
             @ApiImplicitParam(name = "address", value = "家庭住址", required = true, dataType = "String"),
             @ApiImplicitParam(name = "invitationCode", value = "邀请码", required = false, dataType = "String")
     })
-    @RequestMapping(value = "/registered",method = RequestMethod.POST)
-    public Map<String,Object> registered(@RequestParam(value = "name") String name,
-                                         @RequestParam(value = "idNo") String idNo,
-                                         @RequestParam(value = "phone") String phone,
-                                         @RequestParam(value = "password") String password,
-                                         @RequestParam(value = "sex") String sex,
-                                         @RequestParam(value = "birthdayYear") String birthdayYear,
-                                         @RequestParam(value = "birthdayMonth") String birthdayMonth,
-                                         @RequestParam(value = "birthdayDay") String birthdayDay,
-                                         @RequestParam(value = "address") String address,
-                                         @RequestParam(value = "invitationCode") String invitationCode
-                                         ){
+    @RequestMapping(value = "/register",method = RequestMethod.POST)
+    public Map<String,Object> register(@RequestParam(value = "name") String name,
+                                     @RequestParam(value = "idNo") String idNo,
+                                     @RequestParam(value = "phone") String phone,
+                                     @RequestParam(value = "password") String password,
+                                     @RequestParam(value = "sex") String sex,
+                                     @RequestParam(value = "birthdayYear") String birthdayYear,
+//                                     @RequestParam(value = "birthdayMonth") String birthdayMonth,
+//                                     @RequestParam(value = "birthdayDay") String birthdayDay,
+                                     @RequestParam(value = "address") String address,
+                                     @RequestParam(value = "invitationCode") String invitationCode
+                                     ){
         Map<String,Object> map = new HashMap<>();
         Customer customer = new Customer();
 
         //校验身份证号唯一、手机号唯一
         int count = customerServer.queryCustomerByIdNo(idNo);
         if (count != 0){
-            map.put("error","该身份证已注册");
+            map.put("resultCode","该身份证已注册");
             return map;
         }
         count = customerServer.queryCustomerByPhone(phone);
         if (count != 0){
-            map.put("error","该手机号已注册");
+            map.put("resultCode","该手机号已注册");
             return map;
         }
         //实名认证、手机验证码
@@ -91,12 +91,12 @@ public class CustomerController {
         customer.setPassword(password);
         customer.setSex(Integer.parseInt(sex));
         customer.setBirthdayYear(Integer.parseInt(birthdayYear));
-        customer.setBirthdayMonth(Integer.parseInt(birthdayMonth));
-        customer.setBirthdayDay(Integer.parseInt(birthdayDay));
+//        customer.setBirthdayMonth(Integer.parseInt(birthdayMonth));
+//        customer.setBirthdayDay(Integer.parseInt(birthdayDay));
         customer.setAddress(address);
         customer.setInvitationCode(invitationCode);
         customerServer.insertCustomer(customer);
-        map.put("success","成功");
+        map.put("resultCode","注册成功");
         return map;
     }
 
