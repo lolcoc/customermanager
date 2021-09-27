@@ -2,6 +2,7 @@ package com.customer.manager.controller;
 
 import com.customer.manager.entity.Customer;
 import com.customer.manager.server.CustomerServer;
+import com.customer.manager.util.DateUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.PipedOutputStream;
+import java.sql.Date;
 import java.util.*;
 
 @Controller
@@ -39,9 +41,7 @@ public class CustomerController {
             @ApiImplicitParam(name = "phone", value = "手机号", required = true, dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String"),
             @ApiImplicitParam(name = "sex", value = "性别", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "birthdayYear", value = "出生年", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "birthdayMonth", value = "出生月", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "birthdayDay", value = "出生日", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "birthday", value = "出生年", required = true, dataType = "String"),
             @ApiImplicitParam(name = "address", value = "家庭住址", required = true, dataType = "String"),
             @ApiImplicitParam(name = "invitationCode", value = "邀请码", required = false, dataType = "String")
     })
@@ -51,9 +51,7 @@ public class CustomerController {
                                      @RequestParam(value = "phone") String phone,
                                      @RequestParam(value = "password") String password,
                                      @RequestParam(value = "sex") String sex,
-                                     @RequestParam(value = "birthdayYear") String birthdayYear,
-//                                     @RequestParam(value = "birthdayMonth") String birthdayMonth,
-//                                     @RequestParam(value = "birthdayDay") String birthdayDay,
+                                     @RequestParam(value = "birthday") String birthday,
                                      @RequestParam(value = "address") String address,
                                      @RequestParam(value = "invitationCode") String invitationCode
                                      ){
@@ -90,9 +88,7 @@ public class CustomerController {
         customer.setPhone(phone);
         customer.setPassword(password);
         customer.setSex(Integer.parseInt(sex));
-        customer.setBirthdayYear(Integer.parseInt(birthdayYear));
-//        customer.setBirthdayMonth(Integer.parseInt(birthdayMonth));
-//        customer.setBirthdayDay(Integer.parseInt(birthdayDay));
+        customer.setBirthday(DateUtil.stringToDate(birthday));
         customer.setAddress(address);
         customer.setInvitationCode(invitationCode);
         customerServer.insertCustomer(customer);

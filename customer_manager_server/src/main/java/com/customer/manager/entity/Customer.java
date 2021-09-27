@@ -1,6 +1,7 @@
 package com.customer.manager.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Customer implements Serializable {
 
@@ -18,9 +19,7 @@ public class Customer implements Serializable {
     //性别
     private int sex;
     //出生日期
-    private int birthdayYear;
-    private int birthdayMonth;
-    private int birthdayDay;
+    private Date birthday;
     //家庭住址
     private String address;
     //积分
@@ -76,28 +75,12 @@ public class Customer implements Serializable {
         this.sex = sex;
     }
 
-    public int getBirthdayYear() {
-        return birthdayYear;
+    public Date getBirthday() {
+        return birthday;
     }
 
-    public void setBirthdayYear(int birthdayYear) {
-        this.birthdayYear = birthdayYear;
-    }
-
-    public int getBirthdayMonth() {
-        return birthdayMonth;
-    }
-
-    public void setBirthdayMonth(int birthdayMonth) {
-        this.birthdayMonth = birthdayMonth;
-    }
-
-    public int getBirthdayDay() {
-        return birthdayDay;
-    }
-
-    public void setBirthdayDay(int birthdayDay) {
-        this.birthdayDay = birthdayDay;
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
     }
 
     public String getAddress() {

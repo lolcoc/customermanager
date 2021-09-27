@@ -46,9 +46,7 @@ public class CustomerDao{
             customer.setName(result.getString("name"));
             customer.setIdNo(result.getString("id_no"));
             customer.setPhone(result.getString("phone"));
-            customer.setBirthdayYear(result.getInt("birthday_year"));
-            customer.setBirthdayMonth(result.getInt("birthday_month"));
-            customer.setBirthdayDay(result.getInt("birthday_day"));
+            customer.setBirthday(result.getDate("birthday"));
             customer.setSex(result.getInt("sex"));
             customer.setAddress(result.getString("address"));
             customer.setIntegral(result.getInt("integral"));
@@ -72,10 +70,10 @@ public class CustomerDao{
     }
 
     public void insertCustomer(Customer customer) {
-        String sql = "insert into customer ( customer_no, name, id_no, phone, password, birthday_year, birthday_month, birthday_day, sex, address, integral, invitation_code )" +
-                    " values ( ? ,? ,? ,? , ?, ?, ?, ?, ?, ?, ?, ?) ";
-        jdbcTemplate.update(sql,customer.getCustomerNo(), customer.getName(), customer.getIdNo(), customer.getPhone(), customer.getPassword(), customer.getBirthdayYear(),
-                            customer.getBirthdayMonth(), customer.getBirthdayDay(), customer.getSex(), customer.getAddress(), customer.getIntegral(), customer.getInvitationCode());
+        String sql = "insert into customer ( customer_no, name, id_no, phone, password, birthday, sex, address, integral, invitation_code )" +
+                    " values ( ? ,? ,? ,? , ?, ?, ?, ?, ?, ?) ";
+        jdbcTemplate.update(sql,customer.getCustomerNo(), customer.getName(), customer.getIdNo(), customer.getPhone(), customer.getPassword(), customer.getBirthday(),
+                            customer.getSex(), customer.getAddress(), customer.getIntegral(), customer.getInvitationCode());
     }
 
     public Customer queryCustomerByPhoneAndPassword(String phone, String password) {
