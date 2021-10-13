@@ -6,6 +6,7 @@ import com.customer.manager.server.CustomerServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -36,6 +37,17 @@ public class CustomerServerImpl implements CustomerServer {
 
     @Override
     public void insertCustomer(Customer customer) {
+        String invitationCode = customer.getInvitationCode();
+        if (null != invitationCode) {
+            Customer invitationCustomer = customerDao.getCustomerByInvitationCode(invitationCode);
+            if (null != invitationCustomer ) {
+                int integral = invitationCustomer.getIntegral();
+                customerDao.insertInvitationRelationship(invitationCustomer.getCustomerNo(), customer.getCustomerNo(), new Date());
+                customerDao.updateCustomerIntegral(invitationCustomer.getCustomerNo(),++integral);
+            }
+        }
+        invitationCode = (int)((Math.random()*9+1)*10000000)+"";
+        customer.setInvitationCode(invitationCode);
         customerDao.insertCustomer(customer);
     }
 
@@ -47,5 +59,31 @@ public class CustomerServerImpl implements CustomerServer {
     @Override
     public void updateCustomer(Customer customer) {
         customerDao.updateCustomer(customer);
+    }
+
+    @Override
+    public void getVerifyCode(String phone) {
+        customerDao.deleteVerifyCode(phone);
+        int verifyCode = (int)((Math.random()*9+1)*1000);
+        // 将验证码发送到手机 待写
+        customerDao.getVerifyCode(phone,verifyCode);
+    }
+
+    @Override
+    public int verifyVerifyCode(String phone, String verifyCode) {
+        return customerDao.verifyVerifyCode(phone, verifyCode);
+    }
+
+    @Override
+    public void deleteVerifyCode(String phone) {
+        customerDao.deleteVerifyCode(phone);
+    }
+
+    @Override
+    public int queryRealNameAuthentication(String idNo, String name) {
+        // 查询本地实名认证库
+        int count = customerDao.queryRealNameAuthentication(idNo,name);
+        // 查询第三方实名认证 待写
+        return count;
     }
 }

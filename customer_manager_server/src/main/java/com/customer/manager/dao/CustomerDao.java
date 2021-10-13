@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -89,5 +90,49 @@ public class CustomerDao{
     public void updateCustomer(Customer customer) {
         String sql = "update customer set phone = ? , password = ? , integral = ? where customer_no = ?";
         jdbcTemplate.update(sql,customer.getPhone(), customer.getPassword(), customer.getIntegral(), customer.getCustomerNo());
+    }
+
+    public void getVerifyCode(String phone, int verifyCode) {
+        String sql = "insert into temporary_data ( column_1, column_2)" +
+                " values ( ? ,? ) ";
+        jdbcTemplate.update(sql,phone, verifyCode);
+    }
+
+    public void deleteVerifyCode(String phone) {
+        String sql = "delete from temporary_data where column_1 = ? ";
+        jdbcTemplate.update(sql, phone);
+    }
+
+    public int verifyVerifyCode(String phone, String verifyCode) {
+        String sql = "select count(1) from temporary_data where column_1 = ? and column_2 = ? ";
+        return jdbcTemplate.queryForObject(sql, Integer.class, phone, verifyCode);
+    }
+
+    public Customer getCustomerByInvitationCode(String invitationCode) {
+        String sql = "select * from customer where invitation_code = ? ";
+        Customer query = jdbcTemplate.query(sql, new ResultSetExtractor<Customer>() {
+            @Override
+            public Customer extractData(ResultSet result) throws SQLException, DataAccessException {
+                return setCustomerValue(result);
+            }
+        }, invitationCode);
+        return query;
+    }
+
+    public void insertInvitationRelationship(String customerNo, String beInvitedCustomerNo, Date date) {
+        String sql = "insert into invitation_relationship ( Invitation_customer_no, be_invited_customer_no, invitation_time )" +
+                " values ( ? ,?, ? ) ";
+        jdbcTemplate.update(sql,customerNo, beInvitedCustomerNo, date );
+    }
+
+    public void updateCustomerIntegral(String customerNo, int integral) {
+        String sql = "update customer set integral = ? where customer_no = ?";
+        jdbcTemplate.update(sql,integral,customerNo);
+    }
+
+    public int queryRealNameAuthentication(String idNo, String name) {
+        String sql = "select count(1) from real_name_authentication where id_no = ? and  name = ? ";
+        Integer integer = jdbcTemplate.queryForObject(sql, Integer.class, idNo,name);
+        return integer;
     }
 }

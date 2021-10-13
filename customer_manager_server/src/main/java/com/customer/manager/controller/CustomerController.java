@@ -38,6 +38,7 @@ public class CustomerController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "name", value = "姓名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "idNo", value = "身份证号", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "verifyCode", value = "验证码", required = true, dataType = "String"),
             @ApiImplicitParam(name = "phone", value = "手机号", required = true, dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String"),
             @ApiImplicitParam(name = "sex", value = "性别", required = true, dataType = "String"),
@@ -49,6 +50,7 @@ public class CustomerController {
     public Map<String,Object> register(@RequestParam(value = "name") String name,
                                      @RequestParam(value = "idNo") String idNo,
                                      @RequestParam(value = "phone") String phone,
+                                     @RequestParam(value = "verifyCode") String verifyCode,
                                      @RequestParam(value = "password") String password,
                                      @RequestParam(value = "sex") String sex,
                                      @RequestParam(value = "birthday") String birthday,
@@ -61,22 +63,37 @@ public class CustomerController {
         //校验身份证号唯一、手机号唯一
         int count = customerServer.queryCustomerByIdNo(idNo);
         if (count != 0){
-            map.put("resultCode","该身份证已注册");
+            map.put("resultCode","error");
+            map.put("massage","该身份证已注册");
+            return map;
+        }
+        //实名认证
+        count = customerServer.queryRealNameAuthentication(idNo,name);
+        if (count == 0){
+            map.put("resultCode","error");
+            map.put("massage","姓名与身份证不符");
             return map;
         }
         count = customerServer.queryCustomerByPhone(phone);
         if (count != 0){
-            map.put("resultCode","该手机号已注册");
+            map.put("resultCode","error");
+            map.put("massage","该手机号已注册");
             return map;
+        }else {
+         count = customerServer.verifyVerifyCode(phone,verifyCode);
+         if (count == 0){
+             map.put("resultCode","error");
+             map.put("massage","验证码有误");
+             return map;
+         }
+         customerServer.deleteVerifyCode(phone);
         }
-        //实名认证、手机验证码
 
         //自动生成客户编号
         Calendar now = Calendar.getInstance();
         boolean flag = true;
         while (flag) {
-            String customerNo = "" + now.get(Calendar.YEAR) + now.get(Calendar.MONTH) + now.get(Calendar.DAY_OF_MONTH)
-                    + now.get(Calendar.HOUR_OF_DAY) + now.get(Calendar.MINUTE) + now.get(Calendar.SECOND) + now.get(Calendar.MILLISECOND);
+            String customerNo = DateUtil.getMillisString();
             Customer result = customerServer.queryCustomerByCustomerNo(customerNo);
             if (result == null) {
                 customer.setCustomerNo(customerNo);
@@ -92,7 +109,8 @@ public class CustomerController {
         customer.setAddress(address);
         customer.setInvitationCode(invitationCode);
         customerServer.insertCustomer(customer);
-        map.put("resultCode","注册成功");
+        map.put("resultCode","success");
+        map.put("massage","注册成功");
         return map;
     }
 
@@ -107,13 +125,15 @@ public class CustomerController {
         Customer customer = new Customer();
         Customer result = customerServer.queryCustomerByPhoneAndPassword(phone, password);
         if (result == null) {
-            map.put("error","账号或密码错误！");
+            map.put("resultCode","error");
+            map.put("massage","账号或密码错误");
             return map;
         }
         customer.setName(result.getName());
         customer.setIntegral(result.getIntegral());
         customer.setInvitationCode(result.getInvitationCode());
-        map.put("success",customer);
+        map.put("resultCode","success");
+        map.put("massage",result.getName());
         return map;
     }
     @ApiOperation(value = "查询所有客户信息")
@@ -151,7 +171,21 @@ public class CustomerController {
         customer.setPassword(password);
         customer.setAddress(address);
         customerServer.updateCustomer(customer);
-        map.put("success","修改成功！");
+        map.put("resultCode","success");
+        map.put("massage","修改成功！");
+        return map;
+    }
+
+    @ApiOperation(value = "获取验证码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "phone", value = "手机号", required = true, dataType = "String")
+    })
+    @RequestMapping(value = "/getVerifyCode",method = RequestMethod.POST)
+    public Map<String,Object> getVerifyCode(@RequestParam(value = "phone") String phone){
+        Map<String,Object> map = new HashMap();
+        customerServer.getVerifyCode(phone);
+        map.put("resultCode","success");
+        map.put("massage","获取验证码成功！");
         return map;
     }
 }

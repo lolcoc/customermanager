@@ -25,4 +25,12 @@ public interface CustomerServer {
     Customer queryCustomerByPhoneAndPassword(String phone, String password);
 
     void updateCustomer(Customer customer);
+
+    void getVerifyCode(String phone);
+
+    int verifyVerifyCode(String phone, String verifyCode);
+
+    void deleteVerifyCode(String phone);
+
+    int queryRealNameAuthentication(String idNo, String name);
 }
