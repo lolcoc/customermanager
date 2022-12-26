@@ -4,6 +4,7 @@ import com.customer.manager.dao.CustomerDao;
 import com.customer.manager.entity.Customer;
 import com.customer.manager.server.CustomerServer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -85,5 +86,18 @@ public class CustomerServerImpl implements CustomerServer {
         int count = customerDao.queryRealNameAuthentication(idNo,name);
         // 查询第三方实名认证 待写
         return count;
+    }
+
+    @Override
+    @Async
+    public void insertTestTable(java.util.Date date) {
+        try {
+            Thread.sleep(500000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        String sql = "insert into test_table (test_date)" +
+                " values ( ? ) ";
+        customerDao.insertTestTable(date );
     }
 }

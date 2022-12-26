@@ -33,4 +33,6 @@ public interface CustomerServer {
     void deleteVerifyCode(String phone);
 
     int queryRealNameAuthentication(String idNo, String name);
+
+    void insertTestTable(java.util.Date date);
 }

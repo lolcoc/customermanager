@@ -188,4 +188,19 @@ public class CustomerController {
         map.put("massage","获取验证码成功！");
         return map;
     }
+
+    @ApiOperation(value = "test_table")
+    @RequestMapping(value = "/insertTestTable",method = RequestMethod.POST)
+    public Map<String,Object> insertTestTable(){
+        new Thread(){
+            @Override
+            public void run(){
+                customerServer.insertTestTable(new java.util.Date());
+            }
+        }.start();
+        Map<String,Object> map = new HashMap();
+        map.put("resultCode","success");
+        map.put("massage","插入成功 ！");
+        return map;
+    }
 }

@@ -82,7 +82,7 @@ public class CustomerDao{
         return jdbcTemplate.query(sql, new ResultSetExtractor<Customer>() {
             @Override
             public Customer extractData(ResultSet result) throws SQLException, DataAccessException {
-                    return setCustomerValue(result);
+                    return  setCustomerValue(result);
             }
         },phone, password);
     }
@@ -134,5 +134,11 @@ public class CustomerDao{
         String sql = "select count(1) from real_name_authentication where id_no = ? and  name = ? ";
         Integer integer = jdbcTemplate.queryForObject(sql, Integer.class, idNo,name);
         return integer;
+    }
+
+    public void insertTestTable(java.util.Date date) {
+        String sql = "insert into test_table (test_date)" +
+                " values ( ? ) ";
+        jdbcTemplate.update(sql, date );
     }
 }
